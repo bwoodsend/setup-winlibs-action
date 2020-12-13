@@ -1,0 +1,31 @@
+---
+name: 'Setup WinLibs'
+
+description: |
+  Install the WinLibs build of gcc and optionally LLVM + clang.
+
+inputs:
+  version:
+    description: 'WinLibs version'
+    required: true
+    default: 'latest'
+  with_clang:
+    description: |
+      Install with LLVM + clang. Otherwise just install gcc.
+    default: false
+    required: true
+  add_to_path:
+    description: |
+      If true add the `bin` directory to PATH.
+
+outputs:
+  bin_dir:
+    description: |
+      A full path to the `bin` directory containing gcc.
+    value: ''
+
+runs:
+  using: "composite"
+  steps:
+    - run: echo '${{ toJson(inputs) }}'
+      shell: bash

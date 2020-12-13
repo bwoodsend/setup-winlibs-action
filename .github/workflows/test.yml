@@ -1,0 +1,12 @@
+---
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - id: foo
+        uses: bwoodsend/setup-winlibs-action@master
