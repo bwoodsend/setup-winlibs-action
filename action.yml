@@ -5,27 +5,48 @@ description: |
   Install the WinLibs build of gcc and optionally LLVM + clang.
 
 inputs:
-  version:
-    description: 'WinLibs version'
-    required: true
+  tag:
     default: 'latest'
+    description: |
+      Release tag of WinLibs.
+      Defaults to the tag with the newest version of gcc.
   with_clang:
+    default: false
     description: |
       Install with LLVM + clang. Otherwise just install gcc.
-    default: false
-    required: true
-  add_to_path:
+  destination:
+    required: false
     description: |
-      If true add the `bin` directory to PATH.
+      Location to install into. The `mingw32` folder will be placed in this
+      folder so that the path to gcc would be `$destination/mingw32/bin/gcc`.
+      Defaults to the value of `%localappdata%`.
+  add_to_path:
+    default: true
+    description: |
+      If true prepend the `bin` directory to `$PATH`.
+  architecture:
+    default: x86_64
+    description: |
+      Which architecture to install.
+      Either `x86_64` or `64` for 64 bit or `i686`  or `32` for 32 bit.
 
 outputs:
-  bin_dir:
+  bin:
+    value: '${{ steps.main.outputs.bin }}'
     description: |
       A full path to the `bin` directory containing gcc.
-    value: ''
+  root:
+    value: '${{ steps.main.outputs.root }}'
+    description: |
+      The `mingw32` folder at the root of a WinLibs bundle.
 
 runs:
   using: "composite"
   steps:
-    - run: echo '${{ toJson(inputs) }}'
+    - run: python "${{ github.action_path }}/select-version.py" '${{ toJson(inputs) }}'
+      id: main
       shell: bash
+
+    - run: echo "${{ steps.main.outputs.winlibs_bin }}" >> $GITHUB_PATH
+      shell: bash
+#      if: '${{ inputs.add_to_path }}'

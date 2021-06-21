@@ -18,6 +18,11 @@ bin-release/
 # information for Eclipse / Flash Builder.
 .idea
 
-# Bits of TinyCC
+# Bits of WinLibs
 *.zip
-*.tar*
+*.7z
+mingw32
+
+# Compiled Python files
+*.pyc
+__pycache__

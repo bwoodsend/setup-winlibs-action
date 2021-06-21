@@ -8,5 +8,9 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - id: foo
+      - id: winlibs
         uses: bwoodsend/setup-winlibs-action@master
+
+      - run: ls ${{ steps.winlibs.root }}
+      - run: ls ${{ steps.winlibs.bin }}
+      - run: where gcc
