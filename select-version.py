@@ -2,7 +2,8 @@ import sys
 import json
 import os
 from pathlib import Path
-from subprocess import run, DEVNULL
+from subprocess import run, DEVNULL, PIPE
+import re
 import tempfile
 from urllib import request
 import shutil
@@ -63,13 +64,22 @@ def pull(asset: GitReleaseAsset.GitReleaseAsset, dest: str) -> Path:
 
 
 def unpack(archive, dest) -> Path:
+    Path(dest).mkdir(parents=True, exist_ok=True)
+
     # Using this apparently redundant shutil.which() is a hack to respect PATHEX
     # so that 7z.bat shims are recognised.
     run([shutil.which("7z"), "x", "-y", "-o" + str(dest), str(archive)],
         stdout=DEVNULL, check=True)
-    location = Path(dest) / "mingw32"
-    assert location.is_dir()
+    location = Path(dest) / archive_top_level(archive)
+    assert location.is_dir(), f"{location} not in {os.listdir(dest)}"
     return location
+
+
+def archive_top_level(archive):
+    """Find the name of the top level folder in a 7z archive."""
+    p = run([shutil.which("7z"), "l", "-ba", "-slt", str(archive)],
+            stdout=PIPE, check=True, universal_newlines=True)
+    return min(re.findall("Path = (.*)", p.stdout), key=len)
 
 
 def set_output(key, value):
