@@ -11,7 +11,7 @@ jobs:
       - id: winlibs
         uses: bwoodsend/setup-winlibs-action@master
 
-      - run: ls ${{ steps.winlibs.root }}
-      - run: ls ${{ steps.winlibs.bin }}
+      - run: ls ${{ steps.winlibs.outputs.root }}
+      - run: ls ${{ steps.winlibs.outputs.bin }}
       - run: where gcc
         shell: cmd
