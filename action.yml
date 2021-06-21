@@ -45,6 +45,10 @@ runs:
   steps:
     - run: pip install pygithub
       shell: bash
+      # Disable wrapt's Python extension module to speed up build.
+      # This will become a no-op once wrapt start shipping wheels.
+      env:
+        WRAPT_INSTALL_EXTENSIONS: false
 
     - run: python "${{ github.action_path }}/select-version.py" '${{ toJson(inputs) }}'
       id: main
