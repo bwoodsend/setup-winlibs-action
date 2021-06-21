@@ -54,6 +54,6 @@ runs:
       id: main
       shell: bash
 
-    - run: echo "${{ steps.main.outputs.winlibs_bin }}" >> $GITHUB_PATH
+    - run: echo "${{ steps.main.outputs.bin }}" >> $GITHUB_PATH
       shell: bash
 #      if: '${{ inputs.add_to_path }}'

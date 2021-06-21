@@ -83,8 +83,7 @@ def archive_top_level(archive):
 
 
 def set_output(key, value):
-    # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
-    print("::set-output ", key, "=", str(value), sep="")
+    print("::set-output name=", key, "::", str(value), sep="")
 
 
 def select_asset(assets, with_clang, architecture):
