@@ -60,10 +60,10 @@ def pull(asset: GitReleaseAsset.GitReleaseAsset, dest: str) -> Path:
 
 
 def unpack(archive, dest) -> Path:
-    run(["7z", "x", "-y", "-o" + str(dest),
-         str(archive)],
-        stdout=DEVNULL,
-        check=True)
+    # Using this apparently redundant shutil.which() is a hack to respect PATHEX
+    # so that 7z.bat shims are recognised.
+    run([shutil.which("7z"), "x", "-y", "-o" + str(dest), str(archive)],
+        stdout=DEVNULL, check=True)
     location = Path(dest) / "mingw32"
     assert location.is_dir()
     return location
