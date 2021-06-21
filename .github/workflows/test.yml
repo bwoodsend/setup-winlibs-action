@@ -14,3 +14,4 @@ jobs:
       - run: ls ${{ steps.winlibs.root }}
       - run: ls ${{ steps.winlibs.bin }}
       - run: where gcc
+        shell: cmd
