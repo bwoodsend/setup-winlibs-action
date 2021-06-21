@@ -36,6 +36,9 @@ def deserialise_config(serialised):
     config["destination"] = Path(config.get("destination", '') or
                                  os.environ["localappdata"]).resolve()
 
+    if config["tag"].lower() == "latest":
+        config["tag"] = LATEST
+
     return config
 
 
