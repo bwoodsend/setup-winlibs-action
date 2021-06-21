@@ -1,10 +1,13 @@
 import sys
 import json
-import re
 import os
 from pathlib import Path
-from subprocess import run, PIPE, DEVNULL
+from subprocess import run, DEVNULL
 import tempfile
+from urllib import request
+import shutil
+
+from github import Github, GitReleaseAsset
 
 # The "latest" release is ambiguous because there are several programs
 # each with their own versions but generally I'm defining it as the
@@ -36,24 +39,24 @@ def deserialise_config(serialised):
     return config
 
 
-def _release_assets(stdout: str):
-    return re.findall(r"^asset:\t(.*\.7z)$", stdout.split("\n--\n")[0], re.M)
+def winlibs_repo():
+    """Get the WinLibs repo."""
+    return Github().get_repo("brechtsanders/winlibs_mingw")
 
 
 def release_assets(tag: str):
     """List all downloadable files in a given github release."""
-    p = run(
-        ["gh", "release", "--repo=brechtsanders/winlibs_mingw", "view", tag],
-        stdout=PIPE, universal_newlines=True, check=True)
-    return _release_assets(p.stdout)
+    return [i for i in winlibs_repo().get_release(tag).get_assets()
+            if i.name.endswith(".7z")]
 
 
-def pull(tag: str, asset: str, dest: str) -> Path:
+def pull(asset: GitReleaseAsset.GitReleaseAsset, dest: str) -> Path:
     """Download a single file from a github release."""
-    run(["gh", "release", "--repo=brechtsanders/winlibs_mingw", "download",
-         "--pattern", asset, "--dir", dest, tag],
-        check=True, stdout=DEVNULL)
-    return Path(dest, asset)
+    dest = Path(dest, asset.name)
+    with request.urlopen(asset.browser_download_url) as req:
+        with dest.open("wb") as f:
+            shutil.copyfileobj(req, f)
+    return dest
 
 
 def unpack(archive, dest) -> Path:
@@ -76,13 +79,14 @@ def select_asset(assets, with_clang, architecture):
     architecture and desired presence or absence of clang/LLVM.
     """
     for asset in assets:
-        if with_clang != ("llvm" in asset.lower()):
+        if with_clang != ("llvm" in asset.name.lower()):
             continue
-        if architecture not in asset:
+        if architecture not in asset.name:
             continue
         return asset
     raise ValueError("No {} {} clang found out of:\n{}\n".format(
-        architecture, 'with' if with_clang else 'without', '\n'.join(assets)))
+        architecture, 'with' if with_clang else 'without',
+        '\n'.join(i.name for i in assets)))
 
 
 def install(tag: str, with_clang: bool, destination: str, add_to_path: bool,
@@ -96,7 +100,7 @@ def install(tag: str, with_clang: bool, destination: str, add_to_path: bool,
 
     with tempfile.TemporaryDirectory() as temp:
         # Download it.
-        archive = pull(tag, asset, temp)
+        archive = pull(asset, temp)
         # Unzip it.
         mingw32_dir = unpack(archive, destination)
 
