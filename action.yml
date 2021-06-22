@@ -43,6 +43,9 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - run: echo '${{ toJson(inputs) }}' | python -m json.tool
+      shell: bash
+
     - run: pip install pygithub
       shell: bash
       # Disable wrapt's Python extension module to speed up build.
