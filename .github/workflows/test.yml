@@ -15,3 +15,7 @@ jobs:
       - run: ls ${{ steps.winlibs.outputs.bin }}
       - run: where gcc
         shell: cmd
+
+      - uses: actions/checkout@v2
+
+      - run: python validate.py ${{ steps.winlibs.outputs.bin }} 1 0
