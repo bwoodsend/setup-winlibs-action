@@ -19,3 +19,27 @@ jobs:
       - uses: actions/checkout@v2
 
       - run: python validate.py ${{ steps.winlibs.outputs.bin }} 1 0 x86_64
+
+      - id: no-path
+        uses: bwoodsend/setup-winlibs-action@master
+        with:
+          add_to_path: false
+          destination: 'C:\no_path'
+      - run: python validate.py ${{ steps.no-path.outputs.bin }} 0 0 x86_64
+
+      - id: with-clang
+        uses: bwoodsend/setup-winlibs-action@master
+        with:
+          with_clang: true
+          destination: 'C:\with_clang'
+      - run: python validate.py ${{ steps.with-clang.outputs.bin }} 1 1 x86_64
+
+      - id: everything
+        uses: bwoodsend/setup-winlibs-action@master
+        with:
+          with_clang: true
+          architecture: 'i686'
+          destination: 'C:\with_everything'
+          add_to_path: false
+          tag: 10.2.0-11.0.0-8.0.0-r4nvptx
+      - run: python validate.py ${{ steps.everything.outputs.bin }} 0 1 i686
