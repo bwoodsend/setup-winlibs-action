@@ -7,8 +7,7 @@ import re
 import tempfile
 from urllib import request
 import shutil
-
-from github import Github, GitReleaseAsset
+from collections import namedtuple
 
 # The "latest" release is ambiguous because there are several programs
 # each with their own versions but generally I'm defining it as the
@@ -16,6 +15,32 @@ from github import Github, GitReleaseAsset
 # I'm hard coding this tag in for now. Maybe I'll automate this if it
 # seems like a good idea in the future.
 LATEST = "11.1.0-12.0.0-9.0.0-r1"
+
+Asset = namedtuple("ReleaseAsset", ["name", "url"])
+
+
+def api(path):
+    """Pull a json from Github's API."""
+    BASE = "https://api.github.com/repos/brechtsanders/winlibs_mingw"
+    url = '/'.join((BASE, path.strip("/")))
+    with request.urlopen(url) as req:
+        return json.load(req)
+
+
+def releases():
+    """Get all releases by tag and their release files' urls."""
+    return {r["tag_name"]: r["assets"] for r in api("releases")}
+
+
+def release(tag):
+    """Get a specific tagged release. Raise an error if the tag doesn't exist.
+    """
+    _releases = releases()
+    if tag in _releases:
+        return _releases[tag]
+    raise ValueError(
+        f"The tag '{tag}' does not exist. Possible tags are:\n  " +
+        "\n  ".join(_releases))
 
 
 def deserialise_config(serialised):
@@ -34,8 +59,8 @@ def deserialise_config(serialised):
     elif config["architecture"] in (32, "32"):
         config["architecture"] = "i686"
 
-    config["destination"] = Path(config.get("destination", '') or
-                                 os.environ["localappdata"]).resolve()
+    config["destination"] = Path(
+        config.get("destination", '') or os.environ["localappdata"]).resolve()
 
     if config["tag"].lower() == "latest":
         config["tag"] = LATEST
@@ -43,21 +68,18 @@ def deserialise_config(serialised):
     return config
 
 
-def winlibs_repo():
-    """Get the WinLibs repo."""
-    return Github().get_repo("brechtsanders/winlibs_mingw")
-
-
-def release_assets(tag: str):
+def release_assets(_release: list):
     """List all downloadable files in a given github release."""
-    return [i for i in winlibs_repo().get_release(tag).get_assets()
-            if i.name.endswith(".7z")]
+    return [
+        Asset(asset["name"], asset["browser_download_url"])
+        for asset in _release if asset["name"].endswith(".7z")
+    ]
 
 
-def pull(asset: GitReleaseAsset.GitReleaseAsset, dest: str) -> Path:
+def pull(asset: Asset, dest: str) -> Path:
     """Download a single file from a github release."""
     dest = Path(dest, asset.name)
-    with request.urlopen(asset.browser_download_url) as req:
+    with request.urlopen(asset.url) as req:
         with dest.open("wb") as f:
             shutil.copyfileobj(req, f)
     return dest
@@ -68,8 +90,10 @@ def unpack(archive, dest) -> Path:
 
     # Using this apparently redundant shutil.which() is a hack to respect PATHEX
     # so that 7z.bat shims are recognised.
-    run([shutil.which("7z"), "x", "-y", "-o" + str(dest), str(archive)],
-        stdout=DEVNULL, check=True)
+    run([shutil.which("7z"), "x", "-y", "-o" + str(dest),
+         str(archive)],
+        stdout=DEVNULL,
+        check=True)
     location = Path(dest) / archive_top_level(archive)
     assert location.is_dir(), f"{location} not in {os.listdir(dest)}"
     return location
@@ -77,8 +101,11 @@ def unpack(archive, dest) -> Path:
 
 def archive_top_level(archive):
     """Find the name of the top level folder in a 7z archive."""
-    p = run([shutil.which("7z"), "l", "-ba", "-slt", str(archive)],
-            stdout=PIPE, check=True, universal_newlines=True)
+    p = run([shutil.which("7z"), "l", "-ba", "-slt",
+             str(archive)],
+            stdout=PIPE,
+            check=True,
+            universal_newlines=True)
     return min(re.findall("Path = (.*)", p.stdout), key=len)
 
 
@@ -90,6 +117,7 @@ def select_asset(assets, with_clang, architecture):
     """Filter a list of download options for the one with the chosen
     architecture and desired presence or absence of clang/LLVM.
     """
+    asset: Asset
     for asset in assets:
         if with_clang != ("llvm" in asset.name.lower()):
             continue
@@ -106,7 +134,7 @@ def install(tag: str, with_clang: bool, destination: str, add_to_path: bool,
     """Select, download and install a WinLibs build."""
 
     # Find which files are available.
-    assets = release_assets(tag)
+    assets = release_assets(release(tag))
     # Select the one we want.
     asset = select_asset(assets, with_clang, architecture)
 
