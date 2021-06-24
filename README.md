@@ -255,7 +255,7 @@ This generally isn't of much use because the Windows CI images come with
 `x86_64` `gcc` installed already.
 
 ```yaml
-- uses: bwoodsend/setup-winlibs-action@master
+- uses: bwoodsend/setup-winlibs-action@v1
 ```
 
 
@@ -265,7 +265,7 @@ Setting the `with_clang` option to `true` will install a build which also
 contains [clang] and [LLVM].
 
 ```yaml
-- uses: bwoodsend/setup-winlibs-action@master
+- uses: bwoodsend/setup-winlibs-action@v1
   with:
     with_clang: true
 ```
@@ -276,7 +276,7 @@ contains [clang] and [LLVM].
 To install a 32-bit compiler:
 
 ```yaml
-- uses: bwoodsend/setup-winlibs-action@master
+- uses: bwoodsend/setup-winlibs-action@v1
   with:
     architecture: i686
 ```
@@ -288,9 +288,9 @@ You can't have both architectures in one [WinLibs] bundle
 but you can install one of each in separate steps.
 
 ```yaml
-- uses: bwoodsend/setup-winlibs-action@master
+- uses: bwoodsend/setup-winlibs-action@v1
 
-- uses: bwoodsend/setup-winlibs-action@master
+- uses: bwoodsend/setup-winlibs-action@v1
   with:
     architecture: i686
 ```
@@ -301,10 +301,10 @@ note that clang lacks such identifiers)
 or by taking advantage of the [workflow outputs](#outputs):
 
 ```yaml
-- uses: bwoodsend/setup-winlibs-action@master
+- uses: bwoodsend/setup-winlibs-action@v1
   id: winlibs-64
 
-- uses: bwoodsend/setup-winlibs-action@master
+- uses: bwoodsend/setup-winlibs-action@v1
   id: winlibs-32
   with:
     architecture: i686
