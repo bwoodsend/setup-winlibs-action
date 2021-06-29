@@ -8,6 +8,7 @@ import tempfile
 from urllib import request
 import shutil
 from collections import namedtuple
+from typing import Union
 
 # The "latest" release is ambiguous because there are several programs
 # each with their own versions but generally I'm defining it as the
@@ -52,12 +53,7 @@ def deserialise_config(serialised):
         if isinstance(config[key], str):
             config[key] = json.loads(config[key])
 
-    # Normalise architectures to their full names.
-    # Again be wary of strings which should be integers.
-    if config["architecture"] in (64, "64"):
-        config["architecture"] = "x86_64"
-    elif config["architecture"] in (32, "32"):
-        config["architecture"] = "i686"
+    config["architecture"] = normalise_architecture(config["architecture"])
 
     config["destination"] = Path(
         config.get("destination", '') or os.environ["localappdata"]).resolve()
@@ -66,6 +62,26 @@ def deserialise_config(serialised):
         config["tag"] = LATEST
 
     return config
+
+
+architecture_aliases = {
+    "x86_64": [64, "64", "x64", "x86_64", "amd64"],
+    "i686": [32, "32", "x86", "i686"],
+}
+
+
+def normalise_architecture(architecture: Union[str, int]):
+    """Convert any valid architecture alias to either 'x86_64' or 'i686'.
+    Raise an error for invalid input.
+    """
+    for (true_name, aliases) in architecture_aliases.items():
+        if architecture in aliases:
+            return true_name
+    raise ValueError(
+        f"Invalid architecture {repr(architecture)}. "
+        f"Legal 64 bit values are:\n    {architecture_aliases['x86_64']}\n"
+        f"And legal 32 bit values are:\n    {architecture_aliases['i686']}\n"
+    )
 
 
 def release_assets(_release: list):
