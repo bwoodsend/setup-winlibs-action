@@ -8,15 +8,15 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - uses: actions/checkout@v2
+
       - id: winlibs
-        uses: bwoodsend/setup-winlibs-action@master
+        uses: ./
 
       - run: ls ${{ steps.winlibs.outputs.root }}
       - run: ls ${{ steps.winlibs.outputs.bin }}
       - run: where gcc
         shell: cmd
-
-      - uses: actions/checkout@v2
 
       - run: pip install pytest
       - run: pytest tests
@@ -24,21 +24,21 @@ jobs:
       - run: python validate.py ${{ steps.winlibs.outputs.bin }} 1 0 x86_64
 
       - id: no-path
-        uses: bwoodsend/setup-winlibs-action@master
+        uses: ./
         with:
           add_to_path: false
           destination: 'C:\no_path'
       - run: python validate.py ${{ steps.no-path.outputs.bin }} 0 0 x86_64
 
       - id: with-clang
-        uses: bwoodsend/setup-winlibs-action@master
+        uses: ./
         with:
           with_clang: true
           destination: 'C:\with_clang'
       - run: python validate.py ${{ steps.with-clang.outputs.bin }} 1 1 x86_64
 
       - id: everything
-        uses: bwoodsend/setup-winlibs-action@master
+        uses: ./
         with:
           with_clang: true
           architecture: 'i686'
