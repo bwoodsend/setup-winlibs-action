@@ -1,3 +1,4 @@
+import itertools
 import sys
 import json
 import os
@@ -28,9 +29,15 @@ def api(path):
         return json.load(req)
 
 
-def releases():
+def releases(per_page=100):
     """Get all releases by tag and their release files' urls."""
-    return {r["tag_name"]: r["assets"] for r in api("releases")}
+    out = {}
+    for i in itertools.count():
+        page = api(f"releases?page={i};per_page={per_page}")
+        out.update((r["tag_name"], r["assets"]) for r in page)
+        if len(page) < per_page:
+            break
+    return out
 
 
 def release(tag):

@@ -31,3 +31,10 @@ Invalid architecture '62'\. Legal .* are:
 And .* are:
     \[.*\]
 """.strip()
+
+
+def test_paginated_releases():
+    """Test the paginated release searching will still work when the number of
+    WinLibs releases available exceeds the page size.
+    """
+    assert len(select_version.releases(25)) > 30
