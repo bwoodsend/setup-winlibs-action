@@ -6,10 +6,12 @@ from pathlib import Path
 from subprocess import run, DEVNULL, PIPE
 import re
 import tempfile
+import winreg
 from urllib import request
 import shutil
 from collections import namedtuple
 from typing import Union
+import argparse
 
 # The "latest" release is ambiguous because there are several programs
 # each with their own versions but generally I'm defining it as the
@@ -59,11 +61,6 @@ def deserialise_config(serialised):
     for key in ["with_clang", "add_to_path"]:
         if isinstance(config[key], str):
             config[key] = json.loads(config[key])
-
-    config["architecture"] = normalise_architecture(config["architecture"])
-
-    config["destination"] = Path(
-        config.get("destination", '') or os.environ["localappdata"]).resolve()
 
     if config["tag"].lower() == "latest":
         config["tag"] = LATEST
@@ -186,6 +183,10 @@ def install(tag: str, with_clang: bool, destination: str, add_to_path: bool,
             architecture: str):
     """Select, download and install a WinLibs build."""
 
+    tag = tag or LATEST
+    architecture = normalise_architecture(architecture or "x86_64")
+    destination = Path(destination or os.environ["localappdata"]).resolve()
+
     # Find which files are available.
     assets = release_assets(release(tag))
     # Select the one we want.
@@ -205,6 +206,21 @@ def install(tag: str, with_clang: bool, destination: str, add_to_path: bool,
     set_output("bin", mingw32_dir / "bin")
 
 
+def main(args=None):
+    p = argparse.ArgumentParser()
+    p.add_argument("--config", help="Raw JSON containing all configuration")
+    p.add_argument("--tag")
+    p.add_argument("--with-clang", action="store_true")
+    p.add_argument("--add-to-path", action="store_true")
+    p.add_argument("--destination")
+    p.add_argument("--architecture")
+    arguments = vars(p.parse_args(args))
+    config = arguments.pop("config")
+    if config is not None:
+        install(**deserialise_config(config))
+    else:
+        install(**arguments)
+
+
 if __name__ == "__main__":
-    config = deserialise_config(sys.argv[1])
-    install(**config)
+    main()

@@ -321,6 +321,33 @@ its `bin` dir will come first in `PATH` so that the 32 executables can be
 referenced by name rather than full paths.
 
 
+### Usage outside of GitHub Actions
+
+The [install.py](https://github.com/bwoodsend/setup-winlibs-action/raw/v1/install.py)
+script in this repo can be used as a stand-alone installer to be ran locally on
+your home machine or on another CI/CD provider.
+Provided that you have `curl`, `7zip` and a reasonably up to date version of
+Python installed, you can use the following one-liner:
+
+```bash
+curl -Ls https://github.com/bwoodsend/setup-winlibs-action/raw/v1/install.py | python
+```
+
+All [options](#inputs) are available as CLI arguments with the same names but
+with underscores replaced with hyphens.
+Below is an example command with parameters.
+Note that the lone hyphen after `python` and before your options is very
+important!
+
+```bash
+curl -Ls https://github.com/bwoodsend/setup-winlibs-action/raw/v1/install.py | python - --add-to-path --tag=12.1.0-10.0.0-msvcrt-r1
+```
+
+`--add-to-path` will set the system `PATH` environment variable if
+run as a privileged user or the user's `PATH` if ran as a regular user.
+In either case, you will need to restart your terminal for the change to take
+effect.
+
 
 ### Versioning
 
