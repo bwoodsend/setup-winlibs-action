@@ -46,7 +46,7 @@ runs:
     - run: echo '${{ toJson(inputs) }}' | python -m json.tool
       shell: bash
 
-    - run: python "${{ github.action_path }}/select_version.py" '${{ toJson(inputs) }}'
+    - run: python '${{ github.action_path }}/install.py' '${{ toJson(inputs) }}'
       id: main
       shell: bash
 
