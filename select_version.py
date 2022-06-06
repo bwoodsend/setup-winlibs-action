@@ -136,6 +136,36 @@ def set_output(key, value):
     print("::set-output name=", key, "::", str(value), sep="")
 
 
+def prepend_to_path(path):
+    """Persistently prepend a directory to the PATH environment variable."""
+    path = str(path)
+    _key = r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment"
+    RW = winreg.KEY_READ | winreg.KEY_WRITE
+
+    # If on GitHub Actions, registers are ignored in favour of a temporary file
+    # whose location is stored in GITHUB_PATH. This needs to be handled outside
+    # of Python.
+    if os.environ.get("GITHUB_PATH"):
+        return
+
+    # Try to write to the system-wide PATH.
+    try:
+        environment = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, _key, 0, RW)
+    except PermissionError:
+        # If we lack permission, get the current user's SID and write to that
+        # SID's PATH instead.
+        p = run(["whoami", "/USER", "/FO", "CSV", "/NH"], stdout=PIPE)
+        sid = re.match(rb'"[^"]+", *"([^"]+)"', p.stdout)[1].decode("ascii")
+        _key = os.path.join(sid, "Environment")
+        environment = winreg.OpenKey(winreg.HKEY_USERS, _key, 0, RW)
+
+    with environment:
+        old, type = winreg.QueryValueEx(environment, "Path")
+        old = (i for i in old.split(os.pathsep) if i != path)
+        new = os.pathsep.join([path, *old])
+        winreg.SetValueEx(environment, "Path", 0, type, new)
+
+
 def select_asset(assets, with_clang, architecture):
     """Filter a list of download options for the one with the chosen
     architecture and desired presence or absence of clang/LLVM.
@@ -166,6 +196,9 @@ def install(tag: str, with_clang: bool, destination: str, add_to_path: bool,
         archive = pull(asset, temp)
         # Unzip it.
         mingw32_dir = unpack(archive, destination)
+
+    if add_to_path:
+        prepend_to_path(mingw32_dir)
 
     # Make notes of where the key folders are.
     set_output("root", mingw32_dir)
