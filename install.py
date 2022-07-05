@@ -6,6 +6,7 @@ from pathlib import Path
 from subprocess import run, DEVNULL, PIPE
 import re
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
 import winreg
 from urllib import request
 import shutil
@@ -20,7 +21,7 @@ import argparse
 # seems like a good idea in the future.
 LATEST = "12.1.0-14.0.4-10.0.0-msvcrt-r2"
 
-Asset = namedtuple("ReleaseAsset", ["name", "url"])
+Asset = namedtuple("ReleaseAsset", ["name", "url", "size"])
 
 
 def api(path):
@@ -91,17 +92,32 @@ def normalise_architecture(architecture: Union[str, int]):
 def release_assets(_release: list):
     """List all downloadable files in a given github release."""
     return [
-        Asset(asset["name"], asset["browser_download_url"])
+        Asset(asset["name"], asset["browser_download_url"], asset["size"])
         for asset in _release if asset["name"].endswith(".7z")
     ]
 
 
 def pull(asset: Asset, dest: str) -> Path:
-    """Download a single file from a github release."""
+    """Multithreaded download of a single file from a github release."""
     dest = Path(dest, asset.name)
-    with request.urlopen(asset.url) as req:
+    bounds = [*range(0, asset.size, 10_000_000), asset.size]
+    ranges = zip(bounds[:-1], [i - 1 for i in bounds[1:]])
+    with ThreadPoolExecutor() as pool:
         with dest.open("wb") as f:
-            shutil.copyfileobj(req, f)
+            for part in pool.map(lambda x: _pull(asset, dest, x), ranges):
+                with part.open("rb") as source:
+                    shutil.copyfileobj(source, f)
+    return dest
+
+
+def _pull(asset: Asset, dest: str, range):
+    _range = "{}-{}".format(*range)
+    req = request.Request(asset.url)
+    req.add_header("range", f"bytes={_range}")
+    dest = dest.with_name(dest.name + _range)
+    with request.urlopen(req) as response:
+        with dest.open("wb") as f:
+            shutil.copyfileobj(response, f)
     return dest
 
 
