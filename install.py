@@ -6,7 +6,6 @@ from pathlib import Path
 from subprocess import run, DEVNULL, PIPE
 import re
 import tempfile
-import winreg
 from urllib import request
 import shutil
 from collections import namedtuple
@@ -135,6 +134,8 @@ def set_output(key, value):
 
 def prepend_to_path(path):
     """Persistently prepend a directory to the PATH environment variable."""
+    import winreg
+
     path = str(path)
     _key = r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment"
     RW = winreg.KEY_READ | winreg.KEY_WRITE
