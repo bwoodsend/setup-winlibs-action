@@ -80,6 +80,8 @@ def normalise_architecture(architecture: Union[str, int]):
     for (true_name, aliases) in architecture_aliases.items():
         if architecture in aliases:
             return true_name
+        elif isinstance(architecture, str) and architecture.lower() in aliases:
+            return true_name
     raise ValueError(
         f"Invalid architecture {repr(architecture)}. "
         f"Legal 64 bit values are:\n    {architecture_aliases['x86_64']}\n"

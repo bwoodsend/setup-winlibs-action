@@ -18,6 +18,8 @@ def test_normalise_architecture():
     assert install.normalise_architecture("i686") == "i686"
     assert install.normalise_architecture(32) == "i686"
     assert install.normalise_architecture("64") == "x86_64"
+    assert install.normalise_architecture("AMD64") == "x86_64"
+    assert install.normalise_architecture("X86") == "i686"
 
     with pytest.raises(ValueError, match=_error_pattern):
         install.normalise_architecture("62")
