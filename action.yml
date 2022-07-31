@@ -50,10 +50,6 @@ runs:
       id: main
       shell: bash
 
-    - run: |
-        # This condition has to be in bash rather as an step 'if:' because
-        # 'if:' is not allowed in composite actions.
-        if [ ${{ inputs.add_to_path }} != 'false' ] ; then
-          echo "${{ steps.main.outputs.bin }}" >> $GITHUB_PATH
-        fi
-      shell: bash
+    - run: echo ${{ steps.main.outputs.bin }}>>%GITHUB_PATH%
+      if: ${{ inputs.add_to_path != 'false' && inputs.add_to_path != '0' }}
+      shell: cmd
