@@ -131,7 +131,9 @@ def archive_top_level(archive):
 
 
 def set_output(key, value):
-    print("::set-output name=", key, "::", str(value), sep="")
+    if os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+            f.write("{}={}\n".format(key, value))
 
 
 def prepend_to_path(path):
