@@ -146,6 +146,8 @@ def prepend_to_path(path):
     # whose location is stored in GITHUB_PATH. This needs to be handled outside
     # of Python.
     if os.environ.get("GITHUB_PATH"):
+        with open(os.environ["GITHUB_PATH"], "a") as f:
+            f.write(path + "\n")
         return
 
     # Try to write to the system-wide PATH.
@@ -202,7 +204,7 @@ def install(tag: str, with_clang: bool, destination: str, add_to_path: bool,
         mingw32_dir = unpack(archive, destination)
 
     if add_to_path:
-        prepend_to_path(mingw32_dir)
+        prepend_to_path(mingw32_dir / "bin")
 
     # Make notes of where the key folders are.
     set_output("root", mingw32_dir)
