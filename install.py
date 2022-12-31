@@ -1,12 +1,11 @@
 import itertools
-import sys
 import json
 import os
 from pathlib import Path
 from subprocess import run, DEVNULL, PIPE
 import re
 import tempfile
-from urllib import request
+from urllib.request import Request, urlopen
 import shutil
 from collections import namedtuple
 from typing import Union
@@ -22,29 +21,31 @@ LATEST = "12.2.0-15.0.6-10.0.0-msvcrt-r3"
 Asset = namedtuple("ReleaseAsset", ["name", "url"])
 
 
-def api(path):
+def api(path, token=None):
     """Pull a json from Github's API."""
     BASE = "https://api.github.com/repos/brechtsanders/winlibs_mingw"
-    url = '/'.join((BASE, path.strip("/")))
-    with request.urlopen(url) as req:
-        return json.load(req)
+    request = '/'.join((BASE, path.strip("/")))
+    if token:
+        request = Request(request, headers={"Authorization": "Bearer " + token})
+    with urlopen(request) as response:
+        return json.load(response)
 
 
-def releases(per_page=100):
+def releases(token=None, per_page=100):
     """Get all releases by tag and their release files' urls."""
     out = {}
     for i in itertools.count():
-        page = api(f"releases?page={i};per_page={per_page}")
+        page = api(f"releases?page={i}&per_page={per_page}", token)
         out.update((r["tag_name"], r["assets"]) for r in page)
         if len(page) < per_page:
             break
     return out
 
 
-def release(tag):
+def release(tag, token=None):
     """Get a specific tagged release. Raise an error if the tag doesn't exist.
     """
-    _releases = releases()
+    _releases = releases(token)
     if tag in _releases:
         return _releases[tag]
     raise ValueError(
@@ -100,7 +101,7 @@ def release_assets(_release: list):
 def pull(asset: Asset, dest: str) -> Path:
     """Download a single file from a github release."""
     dest = Path(dest, asset.name)
-    with request.urlopen(asset.url) as req:
+    with urlopen(asset.url) as req:
         with dest.open("wb") as f:
             shutil.copyfileobj(req, f)
     return dest
@@ -187,7 +188,7 @@ def select_asset(assets, with_clang, architecture):
 
 
 def install(tag: str, with_clang: bool, destination: str, add_to_path: bool,
-            architecture: str):
+            architecture: str, token: str = None):
     """Select, download and install a WinLibs build."""
 
     tag = tag or LATEST
@@ -195,7 +196,7 @@ def install(tag: str, with_clang: bool, destination: str, add_to_path: bool,
     destination = Path(destination or os.environ["localappdata"]).resolve()
 
     # Find which files are available.
-    assets = release_assets(release(tag))
+    assets = release_assets(release(tag, token))
     # Select the one we want.
     asset = select_asset(assets, with_clang, architecture)
 
@@ -221,12 +222,14 @@ def main(args=None):
     p.add_argument("--add-to-path", action="store_true")
     p.add_argument("--destination")
     p.add_argument("--architecture")
+    p.add_argument("--token")
     arguments = vars(p.parse_args(args))
+    token = arguments.pop("token")
     config = arguments.pop("config")
     if config is not None:
-        install(**deserialise_config(config))
+        install(**deserialise_config(config), token=token)
     else:
-        install(**arguments)
+        install(**arguments, token=token)
 
 
 if __name__ == "__main__":
