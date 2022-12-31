@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+import os
 import pytest
 
 HERE = Path(__file__, "..").resolve()
@@ -39,4 +40,4 @@ def test_paginated_releases():
     """Test the paginated release searching will still work when the number of
     WinLibs releases available exceeds the page size.
     """
-    assert len(install.releases(25)) > 30
+    assert len(install.releases(os.environ.get("token"), per_page=25)) > 30
