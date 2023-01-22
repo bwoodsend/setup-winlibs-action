@@ -107,23 +107,35 @@ def pull(asset: Asset, dest: str) -> Path:
     return dest
 
 
-def unpack(archive, dest) -> Path:
+def unpack(_7z, archive, dest) -> Path:
     Path(dest).mkdir(parents=True, exist_ok=True)
-
-    # Using this apparently redundant shutil.which() is a hack to respect PATHEX
-    # so that 7z.bat shims are recognised.
-    run([shutil.which("7z"), "x", "-y", "-o" + str(dest),
+    run([_7z, "x", "-y", "-o" + str(dest),
          str(archive)],
         stdout=DEVNULL,
         check=True)
-    location = Path(dest) / archive_top_level(archive)
+    location = Path(dest) / archive_top_level(_7z, archive)
     assert location.is_dir(), f"{location} not in {os.listdir(dest)}"
     return location
 
 
-def archive_top_level(archive):
+def _7z(tempdir):
+    _7z = shutil.which("7z")
+    if _7z:
+        return _7z
+    import io
+    import zipfile
+    with urlopen("http://www.7-zip.org/a/7za920.zip") as response:
+        raw = io.BytesIO(response.read())
+    _7z = Path(tempdir, "7z.exe")
+    with zipfile.ZipFile(raw) as zip:
+        with zip.open("7za.exe") as f:
+            _7z.write_bytes(f.read())
+    return _7z
+
+
+def archive_top_level(_7z, archive):
     """Find the name of the top level folder in a 7z archive."""
-    p = run([shutil.which("7z"), "l", "-ba", "-slt",
+    p = run([_7z, "l", "-ba", "-slt",
              str(archive)],
             stdout=PIPE,
             check=True,
@@ -135,6 +147,8 @@ def set_output(key, value):
     if os.environ.get("GITHUB_OUTPUT"):
         with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write("{}={}\n".format(key, value))
+    else:
+        print("WinLibs {}: {}".format(key, value))
 
 
 def prepend_to_path(path):
@@ -176,6 +190,7 @@ def prepend_to_path(path):
     import ctypes
     user32 = ctypes.CDLL("user32.dll")
     user32.SendMessageA(0xffff, ctypes.c_uint(0x001A), 1, b"Environment")
+    print(path, "has been added to PATH. A terminal restart is needed before the change will take effect.")
 
 
 def select_asset(assets, with_clang, architecture):
@@ -210,15 +225,17 @@ def install(tag: str, with_clang: bool, destination: str, add_to_path: bool,
     with tempfile.TemporaryDirectory() as temp:
         # Download it.
         archive = pull(asset, temp)
-        # Unzip it.
-        mingw32_dir = unpack(archive, destination)
+        # Setup 7zip
+        __7z = _7z(temp)
+        # Unpack it.
+        mingw32_dir = unpack(__7z, archive, destination)
 
-    if add_to_path:
-        prepend_to_path(mingw32_dir / "bin")
+        # Make notes of where the key directories are.
+        set_output("root", mingw32_dir)
+        set_output("bin", mingw32_dir / "bin")
 
-    # Make notes of where the key folders are.
-    set_output("root", mingw32_dir)
-    set_output("bin", mingw32_dir / "bin")
+        if add_to_path:
+            prepend_to_path(mingw32_dir / "bin")
 
 
 def main(args=None):

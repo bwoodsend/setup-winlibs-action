@@ -326,8 +326,8 @@ referenced by name rather than full paths.
 The [install.py](https://github.com/bwoodsend/setup-winlibs-action/raw/v1/install.py)
 script in this repo can be used as a stand-alone installer to be ran locally on
 your home machine or on another CI/CD provider.
-Provided that you have `curl`, `7zip` and a reasonably up to date version of
-Python installed, you can use the following one-liner:
+Provided that you have `curl` and a reasonably up to date version of Python
+installed, you can use the following one-liner:
 
 ```bash
 curl -Ls https://github.com/bwoodsend/setup-winlibs-action/raw/v1/install.py | python - --add-to-path
