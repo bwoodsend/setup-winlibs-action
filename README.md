@@ -330,17 +330,17 @@ Provided that you have `curl`, `7zip` and a reasonably up to date version of
 Python installed, you can use the following one-liner:
 
 ```bash
-curl -Ls https://github.com/bwoodsend/setup-winlibs-action/raw/v1/install.py | python
+curl -Ls https://github.com/bwoodsend/setup-winlibs-action/raw/v1/install.py | python - --add-to-path
 ```
 
 All [options](#inputs) are available as CLI arguments with the same names but
 with underscores replaced with hyphens.
-Below is an example command with parameters.
+Below is an example command with most parameters set.
 Note that the lone hyphen after `python` and before your options is very
 important!
 
 ```bash
-curl -Ls https://github.com/bwoodsend/setup-winlibs-action/raw/v1/install.py | python - --add-to-path --tag=12.1.0-10.0.0-msvcrt-r1
+curl -Ls https://github.com/bwoodsend/setup-winlibs-action/raw/v1/install.py | python - --add-to-path --tag=12.1.0-10.0.0-msvcrt-r1 --with-clang --destination ~/WinLibs
 ```
 
 `--add-to-path` will set the system `PATH` environment variable if
@@ -355,17 +355,19 @@ This action will increment:
 
 *   The major version for breaking changes.
     i.e. Something which could possibly break your workflow.
-*   The minor version for new features, bugfixes or speedups.
+*   The minor version for new features, bugfixes, speedups or whatever
+    compatibility patches are needed to keep up with GitHub's ever shifting REST
+    API and runner semantics.
 
 Each release will be tagged with its version number (e.g. `v1.2`).
-The `stable` branch will point to the latest release.
 The `v1` branch will point to the latest tag whose major version is `1`
 so that an action containing `uses: bwoodsend/setup-winlibs-action@v1`
 will automatically benefit from subsequent bugfixes and speedups
 but never upgrade to a version which could break the workflow.
 
-If you'd rather not leave anything to chance then pin the exact versions of
-both this workflow and the WinLibs tag:
+If you really don't like moving parts then pin the exact versions of both this
+workflow and the WinLibs tag:
+
 ```yaml
 uses: bwoodsend/setup-winlibs-action@v1.2
 with:
