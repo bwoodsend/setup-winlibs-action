@@ -170,6 +170,13 @@ def prepend_to_path(path):
         new = os.pathsep.join([path, *old])
         winreg.SetValueEx(environment, "Path", 0, type, new)
 
+    # Broadcast a WM_SETTINGCHANGE notification to all windows so that the
+    # environment change propagates to new cmd windows without a reboot.
+    # https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-settingchange
+    import ctypes
+    user32 = ctypes.CDLL("user32.dll")
+    user32.SendMessageA(0xffff, ctypes.c_uint(0x001A), 1, b"Environment")
+
 
 def select_asset(assets, with_clang, architecture):
     """Filter a list of download options for the one with the chosen
