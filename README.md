@@ -65,182 +65,199 @@ Please consider this as a loose reference rather than guaranteed behaviour
 as the contents do vary between WinLibs builds.
 </summary>
 
-| x86_64                                         | i686                                         | clang x86_64                                   | clang i686                                   |
-|:-----------------------------------------------|:---------------------------------------------|:-----------------------------------------------|:---------------------------------------------|
-| `addr2line`                                    | `addr2line`                                  | `addr2line`                                    | `addr2line`                                  |
-| `ar`                                           | `ar`                                         | `ar`                                           | `ar`                                         |
-| `as`                                           | `as`                                         | `as`                                           | `as`                                         |
-|                                                |                                              | `bugpoint`                                     | `bugpoint`                                   |
-| `c++`                                          | `c++`                                        | `c++`                                          | `c++`                                        |
-| `c++filt`                                      | `c++filt`                                    | `c++filt`                                      | `c++filt`                                    |
-|                                                |                                              | `c-index-test`                                 | `c-index-test`                               |
-|                                                |                                              | `clang`                                        | `clang`                                      |
-|                                                |                                              | `clang++`                                      | `clang++`                                    |
-|                                                |                                              | `clang-apply-replacements`                     | `clang-apply-replacements`                   |
-|                                                |                                              | `clang-change-namespace`                       | `clang-change-namespace`                     |
-|                                                |                                              | `clang-check`                                  | `clang-check`                                |
-|                                                |                                              | `clang-cl`                                     | `clang-cl`                                   |
-|                                                |                                              | `clang-cpp`                                    | `clang-cpp`                                  |
-|                                                |                                              | `clang-doc`                                    | `clang-doc`                                  |
-|                                                |                                              | `clang-extdef-mapping`                         | `clang-extdef-mapping`                       |
-|                                                |                                              | `clang-format`                                 | `clang-format`                               |
-|                                                |                                              | `clang-include-fixer`                          | `clang-include-fixer`                        |
-|                                                |                                              | `clang-move`                                   | `clang-move`                                 |
-|                                                |                                              | `clang-offload-bundler`                        | `clang-offload-bundler`                      |
-|                                                |                                              | `clang-offload-wrapper`                        | `clang-offload-wrapper`                      |
-|                                                |                                              | `clang-query`                                  | `clang-query`                                |
-|                                                |                                              | `clang-refactor`                               | `clang-refactor`                             |
-|                                                |                                              | `clang-rename`                                 | `clang-rename`                               |
-|                                                |                                              | `clang-reorder-fields`                         | `clang-reorder-fields`                       |
-|                                                |                                              | `clang-scan-deps`                              | `clang-scan-deps`                            |
-|                                                |                                              | `clang-tidy`                                   | `clang-tidy`                                 |
-|                                                |                                              | `clangd`                                       | `clangd`                                     |
-|                                                |                                              | `clangd-indexer`                               | `clangd-indexer`                             |
-| `cpp`                                          | `cpp`                                        | `cpp`                                          | `cpp`                                        |
-|                                                |                                              | `dexp`                                         | `dexp`                                       |
-|                                                |                                              | `diagtool`                                     | `diagtool`                                   |
-| `dlltool`                                      | `dlltool`                                    | `dlltool`                                      | `dlltool`                                    |
-| `dllwrap`                                      | `dllwrap`                                    | `dllwrap`                                      | `dllwrap`                                    |
-| `dos2unix`                                     | `dos2unix`                                   | `dos2unix`                                     | `dos2unix`                                   |
-|                                                |                                              | `dsymutil`                                     | `dsymutil`                                   |
-| `elfedit`                                      | `elfedit`                                    | `elfedit`                                      | `elfedit`                                    |
-| `g++`                                          | `g++`                                        | `g++`                                          | `g++`                                        |
-| `gcc`                                          | `gcc`                                        | `gcc`                                          | `gcc`                                        |
-| `gcc-ar`                                       | `gcc-ar`                                     | `gcc-ar`                                       | `gcc-ar`                                     |
-| `gcc-nm`                                       | `gcc-nm`                                     | `gcc-nm`                                       | `gcc-nm`                                     |
-| `gcc-ranlib`                                   | `gcc-ranlib`                                 | `gcc-ranlib`                                   | `gcc-ranlib`                                 |
-| `gcov`                                         | `gcov`                                       | `gcov`                                         | `gcov`                                       |
-| `gcov-dump`                                    | `gcov-dump`                                  | `gcov-dump`                                    | `gcov-dump`                                  |
-| `gcov-tool`                                    | `gcov-tool`                                  | `gcov-tool`                                    | `gcov-tool`                                  |
-| `gdb`                                          | `gdb`                                        | `gdb`                                          | `gdb`                                        |
-| `gdbserver`                                    | `gdbserver`                                  | `gdbserver`                                    | `gdbserver`                                  |
-| `gdc`                                          | `gdc`                                        | `gdc`                                          | `gdc`                                        |
-| `gendef`                                       | `gendef`                                     | `gendef`                                       | `gendef`                                     |
-| `genidl`                                       | `genidl`                                     | `genidl`                                       | `genidl`                                     |
-| `gfortran`                                     | `gfortran`                                   | `gfortran`                                     | `gfortran`                                   |
-| `gprof`                                        | `gprof`                                      | `gprof`                                        | `gprof`                                      |
-|                                                | `i686-w64-mingw32-accel-nvptx-none-gcc`      |                                                | `i686-w64-mingw32-accel-nvptx-none-gcc`      |
-|                                                | `i686-w64-mingw32-accel-nvptx-none-gdc`      |                                                | `i686-w64-mingw32-accel-nvptx-none-gdc`      |
-|                                                | `i686-w64-mingw32-accel-nvptx-none-lto-dump` |                                                | `i686-w64-mingw32-accel-nvptx-none-lto-dump` |
-|                                                | `i686-w64-mingw32-c++`                       |                                                | `i686-w64-mingw32-c++`                       |
-|                                                | `i686-w64-mingw32-g++`                       |                                                | `i686-w64-mingw32-g++`                       |
-|                                                | `i686-w64-mingw32-gcc`                       |                                                | `i686-w64-mingw32-gcc`                       |
-|                                                | `i686-w64-mingw32-gcc-10.2.0`                |                                                | `i686-w64-mingw32-gcc-10.2.0`                |
-|                                                | `i686-w64-mingw32-gcc-ar`                    |                                                | `i686-w64-mingw32-gcc-ar`                    |
-|                                                | `i686-w64-mingw32-gcc-nm`                    |                                                | `i686-w64-mingw32-gcc-nm`                    |
-|                                                | `i686-w64-mingw32-gcc-ranlib`                |                                                | `i686-w64-mingw32-gcc-ranlib`                |
-|                                                | `i686-w64-mingw32-gdc`                       |                                                | `i686-w64-mingw32-gdc`                       |
-|                                                | `i686-w64-mingw32-gfortran`                  |                                                | `i686-w64-mingw32-gfortran`                  |
-|                                                |                                              | `jwasm`                                        | `jwasm`                                      |
-| `ld`                                           | `ld`                                         | `ld`                                           | `ld`                                         |
-| `ld.bfd`                                       | `ld.bfd`                                     | `ld.bfd`                                       | `ld.bfd`                                     |
-|                                                |                                              | `ld64.lld`                                     | `ld64.lld`                                   |
-|                                                |                                              | `llc`                                          | `llc`                                        |
-|                                                |                                              | `lld`                                          | `lld`                                        |
-|                                                |                                              | `lld-link`                                     | `lld-link`                                   |
-|                                                |                                              | `lldb`                                         | `lldb`                                       |
-|                                                |                                              | `lldb-argdumper`                               | `lldb-argdumper`                             |
-|                                                |                                              | `lldb-instr`                                   | `lldb-instr`                                 |
-|                                                |                                              | `lldb-server`                                  | `lldb-server`                                |
-|                                                |                                              | `lli`                                          | `lli`                                        |
-|                                                |                                              | `llvm-addr2line`                               | `llvm-addr2line`                             |
-|                                                |                                              | `llvm-ar`                                      | `llvm-ar`                                    |
-|                                                |                                              | `llvm-as`                                      | `llvm-as`                                    |
-|                                                |                                              | `llvm-bcanalyzer`                              | `llvm-bcanalyzer`                            |
-|                                                |                                              | `llvm-c-test`                                  | `llvm-c-test`                                |
-|                                                |                                              | `llvm-cat`                                     | `llvm-cat`                                   |
-|                                                |                                              | `llvm-cfi-verify`                              | `llvm-cfi-verify`                            |
-|                                                |                                              | `llvm-config`                                  | `llvm-config`                                |
-|                                                |                                              | `llvm-cov`                                     | `llvm-cov`                                   |
-|                                                |                                              | `llvm-cvtres`                                  | `llvm-cvtres`                                |
-|                                                |                                              | `llvm-cxxdump`                                 | `llvm-cxxdump`                               |
-|                                                |                                              | `llvm-cxxfilt`                                 | `llvm-cxxfilt`                               |
-|                                                |                                              | `llvm-cxxmap`                                  | `llvm-cxxmap`                                |
-|                                                |                                              | `llvm-diff`                                    | `llvm-diff`                                  |
-|                                                |                                              | `llvm-dis`                                     | `llvm-dis`                                   |
-|                                                |                                              | `llvm-dlltool`                                 | `llvm-dlltool`                               |
-|                                                |                                              | `llvm-dwarfdump`                               | `llvm-dwarfdump`                             |
-|                                                |                                              | `llvm-dwp`                                     | `llvm-dwp`                                   |
-|                                                |                                              | `llvm-elfabi`                                  | `llvm-elfabi`                                |
-|                                                |                                              | `llvm-exegesis`                                | `llvm-exegesis`                              |
-|                                                |                                              | `llvm-extract`                                 | `llvm-extract`                               |
-|                                                |                                              | `llvm-gsymutil`                                | `llvm-gsymutil`                              |
-|                                                |                                              | `llvm-ifs`                                     | `llvm-ifs`                                   |
-|                                                |                                              | `llvm-install-name-tool`                       | `llvm-install-name-tool`                     |
-|                                                |                                              | `llvm-jitlink`                                 | `llvm-jitlink`                               |
-|                                                |                                              | `llvm-lib`                                     | `llvm-lib`                                   |
-|                                                |                                              | `llvm-link`                                    | `llvm-link`                                  |
-|                                                |                                              | `llvm-lipo`                                    | `llvm-lipo`                                  |
-|                                                |                                              | `llvm-lto2`                                    | `llvm-lto2`                                  |
-|                                                |                                              | `llvm-mc`                                      | `llvm-mc`                                    |
-|                                                |                                              | `llvm-mca`                                     | `llvm-mca`                                   |
-|                                                |                                              | `llvm-ml`                                      | `llvm-ml`                                    |
-|                                                |                                              | `llvm-modextract`                              | `llvm-modextract`                            |
-|                                                |                                              | `llvm-mt`                                      | `llvm-mt`                                    |
-|                                                |                                              | `llvm-nm`                                      | `llvm-nm`                                    |
-|                                                |                                              | `llvm-objcopy`                                 | `llvm-objcopy`                               |
-|                                                |                                              | `llvm-objdump`                                 | `llvm-objdump`                               |
-|                                                |                                              | `llvm-opt-report`                              | `llvm-opt-report`                            |
-|                                                |                                              | `llvm-pdbutil`                                 | `llvm-pdbutil`                               |
-|                                                |                                              | `llvm-profdata`                                | `llvm-profdata`                              |
-|                                                |                                              | `llvm-ranlib`                                  | `llvm-ranlib`                                |
-|                                                |                                              | `llvm-rc`                                      | `llvm-rc`                                    |
-|                                                |                                              | `llvm-readelf`                                 | `llvm-readelf`                               |
-|                                                |                                              | `llvm-readobj`                                 | `llvm-readobj`                               |
-|                                                |                                              | `llvm-reduce`                                  | `llvm-reduce`                                |
-|                                                |                                              | `llvm-rtdyld`                                  | `llvm-rtdyld`                                |
-|                                                |                                              | `llvm-size`                                    | `llvm-size`                                  |
-|                                                |                                              | `llvm-split`                                   | `llvm-split`                                 |
-|                                                |                                              | `llvm-stress`                                  | `llvm-stress`                                |
-|                                                |                                              | `llvm-strings`                                 | `llvm-strings`                               |
-|                                                |                                              | `llvm-strip`                                   | `llvm-strip`                                 |
-|                                                |                                              | `llvm-symbolizer`                              | `llvm-symbolizer`                            |
-|                                                |                                              | `llvm-tblgen`                                  | `llvm-tblgen`                                |
-|                                                |                                              | `llvm-undname`                                 | `llvm-undname`                               |
-|                                                |                                              | `llvm-xray`                                    | `llvm-xray`                                  |
-| `lto-dump`                                     | `lto-dump`                                   | `lto-dump`                                     | `lto-dump`                                   |
-| `mac2unix`                                     | `mac2unix`                                   | `mac2unix`                                     | `mac2unix`                                   |
-| `mingw32-make`                                 | `mingw32-make`                               | `mingw32-make`                                 | `mingw32-make`                               |
-|                                                |                                              | `modularize`                                   | `modularize`                                 |
-|                                                |                                              | `nasm`                                         | `nasm`                                       |
-|                                                |                                              | `ndisasm`                                      | `ndisasm`                                    |
-| `nm`                                           | `nm`                                         | `nm`                                           | `nm`                                         |
-| `objcopy`                                      | `objcopy`                                    | `objcopy`                                      | `objcopy`                                    |
-| `objdump`                                      | `objdump`                                    | `objdump`                                      | `objdump`                                    |
-|                                                |                                              | `obj2yaml`                                     | `obj2yaml`                                   |
-|                                                |                                              | `opt`                                          | `opt`                                        |
-| `pexports`                                     | `pexports`                                   | `pexports`                                     | `pexports`                                   |
-|                                                |                                              | `pp-trace`                                     | `pp-trace`                                   |
-| `ranlib`                                       | `ranlib`                                     | `ranlib`                                       | `ranlib`                                     |
-| `readelf`                                      | `readelf`                                    | `readelf`                                      | `readelf`                                    |
-|                                                |                                              | `sancov`                                       | `sancov`                                     |
-|                                                |                                              | `sanstats`                                     | `sanstats`                                   |
-| `size`                                         | `size`                                       | `size`                                         | `size`                                       |
-| `strings`                                      | `strings`                                    | `strings`                                      | `strings`                                    |
-| `strip`                                        | `strip`                                      | `strip`                                        | `strip`                                      |
-|                                                |                                              | `tool-template`                                | `tool-template`                              |
-| `unix2dos`                                     | `unix2dos`                                   | `unix2dos`                                     | `unix2dos`                                   |
-| `unix2mac`                                     | `unix2mac`                                   | `unix2mac`                                     | `unix2mac`                                   |
-|                                                |                                              | `verify-uselistorder`                          | `verify-uselistorder`                        |
-|                                                |                                              | `vsyasm`                                       | `vsyasm`                                     |
-|                                                |                                              | `wasm-ld`                                      | `wasm-ld`                                    |
-| `windmc`                                       | `windmc`                                     | `windmc`                                       | `windmc`                                     |
-| `windres`                                      | `windres`                                    | `windres`                                      | `windres`                                    |
-| `x86_64-w64-mingw32-accel-nvptx-none-gcc`      |                                              | `x86_64-w64-mingw32-accel-nvptx-none-gcc`      |                                              |
-| `x86_64-w64-mingw32-accel-nvptx-none-gdc`      |                                              | `x86_64-w64-mingw32-accel-nvptx-none-gdc`      |                                              |
-| `x86_64-w64-mingw32-accel-nvptx-none-lto-dump` |                                              | `x86_64-w64-mingw32-accel-nvptx-none-lto-dump` |                                              |
-| `x86_64-w64-mingw32-c++`                       |                                              | `x86_64-w64-mingw32-c++`                       |                                              |
-| `x86_64-w64-mingw32-g++`                       |                                              | `x86_64-w64-mingw32-g++`                       |                                              |
-| `x86_64-w64-mingw32-gcc`                       |                                              | `x86_64-w64-mingw32-gcc`                       |                                              |
-| `x86_64-w64-mingw32-gcc-10.2.0`                |                                              | `x86_64-w64-mingw32-gcc-10.2.0`                |                                              |
-| `x86_64-w64-mingw32-gcc-ar`                    |                                              | `x86_64-w64-mingw32-gcc-ar`                    |                                              |
-| `x86_64-w64-mingw32-gcc-nm`                    |                                              | `x86_64-w64-mingw32-gcc-nm`                    |                                              |
-| `x86_64-w64-mingw32-gcc-ranlib`                |                                              | `x86_64-w64-mingw32-gcc-ranlib`                |                                              |
-| `x86_64-w64-mingw32-gdc`                       |                                              | `x86_64-w64-mingw32-gdc`                       |                                              |
-| `x86_64-w64-mingw32-gfortran`                  |                                              | `x86_64-w64-mingw32-gfortran`                  |                                              |
-|                                                |                                              | `yaml2obj`                                     | `yaml2obj`                                   |
-|                                                |                                              | `yasm`                                         | `yasm`                                       |
-|                                                |                                              | `ytasm`                                        | `ytasm`                                      |
+| x86_64                            | i686                            | x86_64 clang                      | i686 clang                      |
+|:----------------------------------|:--------------------------------|:----------------------------------|:--------------------------------|
+|                                   |                                 | FileCheck.exe                     | FileCheck.exe                   |
+|                                   |                                 | UnicodeNameMappingGenerator.exe   | UnicodeNameMappingGenerator.exe |
+| addr2line.exe                     | addr2line.exe                   | addr2line.exe                     | addr2line.exe                   |
+| ar.exe                            | ar.exe                          | ar.exe                            | ar.exe                          |
+| as.exe                            | as.exe                          | as.exe                            | as.exe                          |
+|                                   |                                 | bugpoint.exe                      | bugpoint.exe                    |
+| c++.exe                           | c++.exe                         | c++.exe                           | c++.exe                         |
+| c++filt.exe                       | c++filt.exe                     | c++filt.exe                       | c++filt.exe                     |
+| ccache.exe                        | ccache.exe                      | ccache.exe                        | ccache.exe                      |
+|                                   |                                 | clang++.exe                       | clang++.exe                     |
+|                                   |                                 | clang-apply-replacements.exe      | clang-apply-replacements.exe    |
+|                                   |                                 | clang-change-namespace.exe        | clang-change-namespace.exe      |
+|                                   |                                 | clang-check.exe                   | clang-check.exe                 |
+|                                   |                                 | clang-cl.exe                      | clang-cl.exe                    |
+|                                   |                                 | clang-cpp.exe                     | clang-cpp.exe                   |
+|                                   |                                 | clang-doc.exe                     | clang-doc.exe                   |
+|                                   |                                 | clang-extdef-mapping.exe          | clang-extdef-mapping.exe        |
+|                                   |                                 | clang-format.exe                  | clang-format.exe                |
+|                                   |                                 | clang-include-fixer.exe           | clang-include-fixer.exe         |
+|                                   |                                 | clang-linker-wrapper.exe          | clang-linker-wrapper.exe        |
+|                                   |                                 | clang-move.exe                    | clang-move.exe                  |
+|                                   |                                 | clang-nvlink-wrapper.exe          | clang-nvlink-wrapper.exe        |
+|                                   |                                 | clang-offload-bundler.exe         | clang-offload-bundler.exe       |
+|                                   |                                 | clang-offload-packager.exe        | clang-offload-packager.exe      |
+|                                   |                                 | clang-offload-wrapper.exe         | clang-offload-wrapper.exe       |
+|                                   |                                 | clang-pseudo.exe                  | clang-pseudo.exe                |
+|                                   |                                 | clang-query.exe                   | clang-query.exe                 |
+|                                   |                                 | clang-refactor.exe                | clang-refactor.exe              |
+|                                   |                                 | clang-rename.exe                  | clang-rename.exe                |
+|                                   |                                 | clang-reorder-fields.exe          | clang-reorder-fields.exe        |
+|                                   |                                 | clang-repl.exe                    | clang-repl.exe                  |
+|                                   |                                 | clang-scan-deps.exe               | clang-scan-deps.exe             |
+|                                   |                                 | clang-tidy.exe                    | clang-tidy.exe                  |
+|                                   |                                 | clang.exe                         | clang.exe                       |
+|                                   |                                 | clangd.exe                        | clangd.exe                      |
+| cmake.exe                         | cmake.exe                       | cmake.exe                         | cmake.exe                       |
+| cmcldeps.exe                      | cmcldeps.exe                    | cmcldeps.exe                      | cmcldeps.exe                    |
+|                                   |                                 | count.exe                         | count.exe                       |
+| cpack.exe                         | cpack.exe                       | cpack.exe                         | cpack.exe                       |
+| cpp.exe                           | cpp.exe                         | cpp.exe                           | cpp.exe                         |
+| ctest.exe                         | ctest.exe                       | ctest.exe                         | ctest.exe                       |
+|                                   |                                 | diagtool.exe                      | diagtool.exe                    |
+| dlltool.exe                       | dlltool.exe                     | dlltool.exe                       | dlltool.exe                     |
+| dllwrap.exe                       | dllwrap.exe                     | dllwrap.exe                       | dllwrap.exe                     |
+| dos2unix.exe                      | dos2unix.exe                    | dos2unix.exe                      | dos2unix.exe                    |
+| doxygen.exe                       | doxygen.exe                     | doxygen.exe                       | doxygen.exe                     |
+|                                   |                                 | dsymutil.exe                      | dsymutil.exe                    |
+| elfedit.exe                       | elfedit.exe                     | elfedit.exe                       | elfedit.exe                     |
+|                                   |                                 | find-all-symbols.exe              | find-all-symbols.exe            |
+| g++.exe                           | g++.exe                         | g++.exe                           | g++.exe                         |
+| gcc-ar.exe                        | gcc-ar.exe                      | gcc-ar.exe                        | gcc-ar.exe                      |
+| gcc-nm.exe                        | gcc-nm.exe                      | gcc-nm.exe                        | gcc-nm.exe                      |
+| gcc-ranlib.exe                    | gcc-ranlib.exe                  | gcc-ranlib.exe                    | gcc-ranlib.exe                  |
+| gcc.exe                           | gcc.exe                         | gcc.exe                           | gcc.exe                         |
+| gcov-dump.exe                     | gcov-dump.exe                   | gcov-dump.exe                     | gcov-dump.exe                   |
+| gcov-tool.exe                     | gcov-tool.exe                   | gcov-tool.exe                     | gcov-tool.exe                   |
+| gcov.exe                          | gcov.exe                        | gcov.exe                          | gcov.exe                        |
+| gdb.exe                           | gdb.exe                         | gdb.exe                           | gdb.exe                         |
+| gdbserver.exe                     | gdbserver.exe                   | gdbserver.exe                     | gdbserver.exe                   |
+| gendef.exe                        | gendef.exe                      | gendef.exe                        | gendef.exe                      |
+| genidl.exe                        | genidl.exe                      | genidl.exe                        | genidl.exe                      |
+| gfortran.exe                      | gfortran.exe                    | gfortran.exe                      | gfortran.exe                    |
+| gprof.exe                         | gprof.exe                       | gprof.exe                         | gprof.exe                       |
+| iconv.exe                         | iconv.exe                       | iconv.exe                         | iconv.exe                       |
+| jwasm.exe                         | jwasm.exe                       | jwasm.exe                         | jwasm.exe                       |
+| ld.bfd.exe                        | ld.bfd.exe                      | ld.bfd.exe                        | ld.bfd.exe                      |
+| ld.exe                            | ld.exe                          | ld.exe                            | ld.exe                          |
+|                                   |                                 | ld.lld.exe                        | ld.lld.exe                      |
+|                                   |                                 | ld64.lld.exe                      | ld64.lld.exe                    |
+|                                   |                                 | llc.exe                           | llc.exe                         |
+|                                   |                                 | lld-link.exe                      | lld-link.exe                    |
+|                                   |                                 | lld.exe                           | lld.exe                         |
+|                                   |                                 | lldb-argdumper.exe                | lldb-argdumper.exe              |
+|                                   |                                 | lldb-instr.exe                    | lldb-instr.exe                  |
+|                                   |                                 | lldb-mi.exe                       | lldb-mi.exe                     |
+|                                   |                                 | lldb-server.exe                   | lldb-server.exe                 |
+|                                   |                                 | lldb-vscode.exe                   | lldb-vscode.exe                 |
+|                                   |                                 | lldb.exe                          | lldb.exe                        |
+|                                   |                                 | lli-child-target.exe              | lli-child-target.exe            |
+|                                   |                                 | lli.exe                           | lli.exe                         |
+|                                   |                                 | llvm-PerfectShuffle.exe           | llvm-PerfectShuffle.exe         |
+|                                   |                                 | llvm-addr2line.exe                | llvm-addr2line.exe              |
+|                                   |                                 | llvm-ar.exe                       | llvm-ar.exe                     |
+|                                   |                                 | llvm-as.exe                       | llvm-as.exe                     |
+|                                   |                                 | llvm-bcanalyzer.exe               | llvm-bcanalyzer.exe             |
+|                                   |                                 | llvm-bitcode-strip.exe            | llvm-bitcode-strip.exe          |
+|                                   |                                 | llvm-cat.exe                      | llvm-cat.exe                    |
+|                                   |                                 | llvm-cfi-verify.exe               | llvm-cfi-verify.exe             |
+|                                   |                                 | llvm-config.exe                   | llvm-config.exe                 |
+|                                   |                                 | llvm-cov.exe                      | llvm-cov.exe                    |
+|                                   |                                 | llvm-cvtres.exe                   | llvm-cvtres.exe                 |
+|                                   |                                 | llvm-cxxdump.exe                  | llvm-cxxdump.exe                |
+|                                   |                                 | llvm-cxxfilt.exe                  | llvm-cxxfilt.exe                |
+|                                   |                                 | llvm-cxxmap.exe                   | llvm-cxxmap.exe                 |
+|                                   |                                 | llvm-debuginfod-find.exe          | llvm-debuginfod-find.exe        |
+|                                   |                                 | llvm-debuginfod.exe               | llvm-debuginfod.exe             |
+|                                   |                                 | llvm-diff.exe                     | llvm-diff.exe                   |
+|                                   |                                 | llvm-dis.exe                      | llvm-dis.exe                    |
+|                                   |                                 | llvm-dlltool.exe                  | llvm-dlltool.exe                |
+|                                   |                                 | llvm-dwarfdump.exe                | llvm-dwarfdump.exe              |
+|                                   |                                 | llvm-dwarfutil.exe                | llvm-dwarfutil.exe              |
+|                                   |                                 | llvm-dwp.exe                      | llvm-dwp.exe                    |
+|                                   |                                 | llvm-exegesis.exe                 | llvm-exegesis.exe               |
+|                                   |                                 | llvm-extract.exe                  | llvm-extract.exe                |
+|                                   |                                 | llvm-gsymutil.exe                 | llvm-gsymutil.exe               |
+|                                   |                                 | llvm-ifs.exe                      | llvm-ifs.exe                    |
+|                                   |                                 | llvm-install-name-tool.exe        | llvm-install-name-tool.exe      |
+|                                   |                                 | llvm-jitlink-executor.exe         | llvm-jitlink-executor.exe       |
+|                                   |                                 | llvm-jitlink.exe                  | llvm-jitlink.exe                |
+|                                   |                                 | llvm-lib.exe                      | llvm-lib.exe                    |
+|                                   |                                 | llvm-libtool-darwin.exe           | llvm-libtool-darwin.exe         |
+|                                   |                                 | llvm-link.exe                     | llvm-link.exe                   |
+|                                   |                                 | llvm-lipo.exe                     | llvm-lipo.exe                   |
+|                                   |                                 | llvm-lto.exe                      | llvm-lto.exe                    |
+|                                   |                                 | llvm-lto2.exe                     | llvm-lto2.exe                   |
+|                                   |                                 | llvm-mc.exe                       | llvm-mc.exe                     |
+|                                   |                                 | llvm-mca.exe                      | llvm-mca.exe                    |
+|                                   |                                 | llvm-ml.exe                       | llvm-ml.exe                     |
+|                                   |                                 | llvm-modextract.exe               | llvm-modextract.exe             |
+|                                   |                                 | llvm-mt.exe                       | llvm-mt.exe                     |
+|                                   |                                 | llvm-nm.exe                       | llvm-nm.exe                     |
+|                                   |                                 | llvm-objcopy.exe                  | llvm-objcopy.exe                |
+|                                   |                                 | llvm-objdump.exe                  | llvm-objdump.exe                |
+|                                   |                                 | llvm-opt-report.exe               | llvm-opt-report.exe             |
+|                                   |                                 | llvm-otool.exe                    | llvm-otool.exe                  |
+|                                   |                                 | llvm-pdbutil.exe                  | llvm-pdbutil.exe                |
+|                                   |                                 | llvm-profdata.exe                 | llvm-profdata.exe               |
+|                                   |                                 | llvm-profgen.exe                  | llvm-profgen.exe                |
+|                                   |                                 | llvm-ranlib.exe                   | llvm-ranlib.exe                 |
+|                                   |                                 | llvm-rc.exe                       | llvm-rc.exe                     |
+|                                   |                                 | llvm-readelf.exe                  | llvm-readelf.exe                |
+|                                   |                                 | llvm-readobj.exe                  | llvm-readobj.exe                |
+|                                   |                                 | llvm-reduce.exe                   | llvm-reduce.exe                 |
+|                                   |                                 | llvm-remark-size-diff.exe         | llvm-remark-size-diff.exe       |
+|                                   |                                 | llvm-rtdyld.exe                   | llvm-rtdyld.exe                 |
+|                                   |                                 | llvm-sim.exe                      | llvm-sim.exe                    |
+|                                   |                                 | llvm-size.exe                     | llvm-size.exe                   |
+|                                   |                                 | llvm-split.exe                    | llvm-split.exe                  |
+|                                   |                                 | llvm-stress.exe                   | llvm-stress.exe                 |
+|                                   |                                 | llvm-strings.exe                  | llvm-strings.exe                |
+|                                   |                                 | llvm-strip.exe                    | llvm-strip.exe                  |
+|                                   |                                 | llvm-symbolizer.exe               | llvm-symbolizer.exe             |
+|                                   |                                 | llvm-tapi-diff.exe                | llvm-tapi-diff.exe              |
+|                                   |                                 | llvm-tblgen.exe                   | llvm-tblgen.exe                 |
+|                                   |                                 | llvm-tli-checker.exe              | llvm-tli-checker.exe            |
+|                                   |                                 | llvm-undname.exe                  | llvm-undname.exe                |
+|                                   |                                 | llvm-windres.exe                  | llvm-windres.exe                |
+|                                   |                                 | llvm-xray.exe                     | llvm-xray.exe                   |
+| lto-dump.exe                      | lto-dump.exe                    | lto-dump.exe                      | lto-dump.exe                    |
+| mac2unix.exe                      | mac2unix.exe                    | mac2unix.exe                      | mac2unix.exe                    |
+| mingw32-make.exe                  | mingw32-make.exe                | mingw32-make.exe                  | mingw32-make.exe                |
+|                                   |                                 | modularize.exe                    | modularize.exe                  |
+| nasm.exe                          | nasm.exe                        | nasm.exe                          | nasm.exe                        |
+| ndisasm.exe                       | ndisasm.exe                     | ndisasm.exe                       | ndisasm.exe                     |
+| ninja.exe                         | ninja.exe                       | ninja.exe                         | ninja.exe                       |
+| nm.exe                            | nm.exe                          | nm.exe                            | nm.exe                          |
+|                                   |                                 | not.exe                           | not.exe                         |
+|                                   |                                 | obj2yaml.exe                      | obj2yaml.exe                    |
+| objcopy.exe                       | objcopy.exe                     | objcopy.exe                       | objcopy.exe                     |
+| objdump.exe                       | objdump.exe                     | objdump.exe                       | objdump.exe                     |
+|                                   |                                 | opt.exe                           | opt.exe                         |
+| pexports.exe                      | pexports.exe                    | pexports.exe                      | pexports.exe                    |
+|                                   |                                 | pp-trace.exe                      | pp-trace.exe                    |
+| ranlib.exe                        | ranlib.exe                      | ranlib.exe                        | ranlib.exe                      |
+| readelf.exe                       | readelf.exe                     | readelf.exe                       | readelf.exe                     |
+|                                   |                                 | sancov.exe                        | sancov.exe                      |
+|                                   |                                 | sanstats.exe                      | sanstats.exe                    |
+| size.exe                          | size.exe                        | size.exe                          | size.exe                        |
+|                                   |                                 | split-file.exe                    | split-file.exe                  |
+| strings.exe                       | strings.exe                     | strings.exe                       | strings.exe                     |
+| strip.exe                         | strip.exe                       | strip.exe                         | strip.exe                       |
+| unix2dos.exe                      | unix2dos.exe                    | unix2dos.exe                      | unix2dos.exe                    |
+| unix2mac.exe                      | unix2mac.exe                    | unix2mac.exe                      | unix2mac.exe                    |
+|                                   |                                 | verify-uselistorder.exe           | verify-uselistorder.exe         |
+| vsyasm.exe                        | vsyasm.exe                      | vsyasm.exe                        | vsyasm.exe                      |
+|                                   |                                 | wasm-ld.exe                       | wasm-ld.exe                     |
+| widl.exe                          | widl.exe                        | widl.exe                          | widl.exe                        |
+| windmc.exe                        | windmc.exe                      | windmc.exe                        | windmc.exe                      |
+| windres.exe                       | windres.exe                     | windres.exe                       | windres.exe                     |
+|                                   |                                 | yaml-bench.exe                    | yaml-bench.exe                  |
+|                                   |                                 | yaml2obj.exe                      | yaml2obj.exe                    |
+| yasm.exe                          | yasm.exe                        | yasm.exe                          | yasm.exe                        |
+| ytasm.exe                         | ytasm.exe                       | ytasm.exe                         | ytasm.exe                       |
+| x86_64-w64-mingw32-c++.exe        | i686-w64-mingw32-c++.exe        | x86_64-w64-mingw32-c++.exe        | i686-w64-mingw32-c++.exe        |
+| x86_64-w64-mingw32-g++.exe        | i686-w64-mingw32-g++.exe        | x86_64-w64-mingw32-g++.exe        | i686-w64-mingw32-g++.exe        |
+| x86_64-w64-mingw32-gcc-12.2.0.exe | i686-w64-mingw32-gcc-12.2.0.exe | x86_64-w64-mingw32-gcc-12.2.0.exe | i686-w64-mingw32-gcc-12.2.0.exe |
+| x86_64-w64-mingw32-gcc-ar.exe     | i686-w64-mingw32-gcc-ar.exe     | x86_64-w64-mingw32-gcc-ar.exe     | i686-w64-mingw32-gcc-ar.exe     |
+| x86_64-w64-mingw32-gcc-nm.exe     | i686-w64-mingw32-gcc-nm.exe     | x86_64-w64-mingw32-gcc-nm.exe     | i686-w64-mingw32-gcc-nm.exe     |
+| x86_64-w64-mingw32-gcc-ranlib.exe | i686-w64-mingw32-gcc-ranlib.exe | x86_64-w64-mingw32-gcc-ranlib.exe | i686-w64-mingw32-gcc-ranlib.exe |
+| x86_64-w64-mingw32-gcc.exe        | i686-w64-mingw32-gcc.exe        | x86_64-w64-mingw32-gcc.exe        | i686-w64-mingw32-gcc.exe        |
+| x86_64-w64-mingw32-gfortran.exe   | i686-w64-mingw32-gfortran.exe   | x86_64-w64-mingw32-gfortran.exe   | i686-w64-mingw32-gfortran.exe   |
 
 </details>
 
