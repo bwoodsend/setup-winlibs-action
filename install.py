@@ -11,13 +11,6 @@ from collections import namedtuple
 from typing import Union
 import argparse
 
-# The "latest" release is ambiguous because there are several programs
-# each with their own versions but generally I'm defining it as the
-# release with the latest version of gcc.
-# I'm hard coding this tag in for now. Maybe I'll automate this if it
-# seems like a good idea in the future.
-LATEST = "13.2.0-17.0.4-11.0.1-msvcrt-r2"
-
 Asset = namedtuple("ReleaseAsset", ["name", "url"])
 
 
@@ -31,26 +24,46 @@ def api(path, token=None):
         return json.load(response)
 
 
-def releases(token=None, per_page=100):
+def tags(token=None, per_page=100):
     """Get all releases by tag and their release files' urls."""
-    out = {}
     for i in itertools.count():
-        page = api(f"releases?page={i}&per_page={per_page}", token)
-        out.update((r["tag_name"], r["assets"]) for r in page)
+        page = api(f"tags?page={i}&per_page={per_page}", token)
+        yield from (i["name"] for i in page)
         if len(page) < per_page:
             break
-    return out
 
 
 def release(tag, token=None):
     """Get a specific tagged release. Raise an error if the tag doesn't exist.
     """
-    _releases = releases(token)
-    if tag in _releases:
-        return _releases[tag]
-    raise ValueError(
-        f"The tag '{tag}' does not exist. Possible tags are:\n  " +
-        "\n  ".join(_releases))
+    try:
+        return api(f"releases/tags/{tag}", token)
+    except:
+        raise ValueError(
+            f"The tag '{tag}' does not exist. Possible tags are:\n  " +
+            "\n  ".join(tags())) from None
+
+
+def latest(tags):
+    """Filter and pick out the latest WinLibs tag.
+
+    * Remove snapshots
+    * Remove UCRT (as opposed to MSVCRT) linked versions
+    * Remove gcc-only versions
+    * Select the latest version of gcc, breaking ties with the clang and then
+      the other version numbers
+
+    """
+    sort_keys = {}
+    for tag in tags:
+        match = re.match("([^-]+)-([^-]+)-([^-]+)-msvcrt-r(.+)", tag)
+        if not match:
+            continue
+        if "snapshot" in tag:
+            continue
+        sort_keys[tag] = [[int(i) for i in re.findall(r"\d+", j)]
+                          for j in match.groups()]
+    return max(sort_keys, key=sort_keys.get)
 
 
 def deserialise_config(serialised):
@@ -61,9 +74,6 @@ def deserialise_config(serialised):
     for key in ["with_clang", "add_to_path"]:
         if isinstance(config[key], str):
             config[key] = json.loads(config[key])
-
-    if config["tag"].lower() == "latest":
-        config["tag"] = LATEST
 
     return config
 
@@ -90,16 +100,17 @@ def normalise_architecture(architecture: Union[str, int]):
     )
 
 
-def release_assets(_release: list):
+def release_assets(_release: dict):
     """List all downloadable files in a given github release."""
     return [
         Asset(asset["name"], asset["browser_download_url"])
-        for asset in _release if asset["name"].endswith(".7z")
+        for asset in _release["assets"] if asset["name"].endswith(".7z")
     ]
 
 
 def pull(asset: Asset, dest: str) -> Path:
     """Download a single file from a github release."""
+    print("Dowload:", asset.url)
     dest = Path(dest, asset.name)
     with urlopen(asset.url) as req:
         with dest.open("wb") as f:
@@ -124,7 +135,7 @@ def _7z(tempdir):
         return _7z
     import io
     import zipfile
-    with urlopen("http://www.7-zip.org/a/7za920.zip") as response:
+    with urlopen("https://www.7-zip.org/a/7za920.zip") as response:
         raw = io.BytesIO(response.read())
     _7z = Path(tempdir, "7z.exe")
     with zipfile.ZipFile(raw) as zip:
@@ -147,8 +158,7 @@ def set_output(key, value):
     if os.environ.get("GITHUB_OUTPUT"):
         with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write("{}={}\n".format(key, value))
-    else:
-        print("WinLibs {}: {}".format(key, value))
+    print("WinLibs {}: {}".format(key, value))
 
 
 def prepend_to_path(path):
@@ -213,7 +223,8 @@ def install(tag: str, with_clang: bool, destination: str, add_to_path: bool,
             architecture: str, token: str = None):
     """Select, download and install a WinLibs build."""
 
-    tag = tag or LATEST
+    tag = tag if tag and tag.lower() != "latest" else latest(tags(token))
+    print("WinLibs tag:", tag)
     architecture = normalise_architecture(architecture or "x86_64")
     destination = Path(destination or os.environ["localappdata"]).resolve()
 
