@@ -16,7 +16,7 @@ import argparse
 # release with the latest version of gcc.
 # I'm hard coding this tag in for now. Maybe I'll automate this if it
 # seems like a good idea in the future.
-LATEST = "13.2.0-17.0.4-11.0.1-msvcrt-r2"
+LATEST = "13.2.0posix-17.0.6-11.0.1-msvcrt-r3"
 
 Asset = namedtuple("ReleaseAsset", ["name", "url"])
 
