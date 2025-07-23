@@ -5,15 +5,11 @@ description: |
   Install the WinLibs build of gcc and optionally LLVM + clang.
 
 inputs:
-  tag:
-    default: 'latest'
+  architecture:
+    default: x86_64
     description: |
-      Release tag of WinLibs.
-      Defaults to the tag with the newest version of gcc.
-  with_clang:
-    default: false
-    description: |
-      Install with LLVM + clang. Otherwise just install gcc.
+      Which architecture to install.
+      Either `x86_64` or `64` for 64 bit or `i686`  or `32` for 32 bit.
   destination:
     required: false
     description: |
@@ -24,11 +20,27 @@ inputs:
     default: true
     description: |
       If true prepend the `bin` directory to `$PATH`.
-  architecture:
-    default: x86_64
+  tag:
+    default: 'latest'
     description: |
-      Which architecture to install.
-      Either `x86_64` or `64` for 64 bit or `i686`  or `32` for 32 bit.
+      Release tag of WinLibs.
+      Defaults to the tag with the newest version of gcc.
+  with_clang:
+    default: false
+    description: |
+      Install with LLVM + clang. Otherwise just install gcc.
+  runtime:
+    default: msvcrt
+    description: |
+      Select between 'msvcrt' (legacy Windows support) or 'ucrt'.
+  threads:
+    default: posix
+    description: |
+      The theading model, one of 'posix', 'win32' or 'mcf'.
+  snapshots:
+    default: false
+    description: |
+      Allow using snapshot builds if the latest is a snapshot.
 
 outputs:
   bin:

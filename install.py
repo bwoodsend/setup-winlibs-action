@@ -26,7 +26,7 @@ def api(path, token=None):
 
 def tags(token=None, per_page=100):
     """Get all releases by tag and their release files' urls."""
-    for i in itertools.count():
+    for i in itertools.count(start=1):
         page = api(f"tags?page={i}&per_page={per_page}", token)
         yield from (i["name"] for i in page)
         if len(page) < per_page:
@@ -44,34 +44,54 @@ def release(tag, token=None):
             "\n  ".join(tags())) from None
 
 
-def latest(tags):
-    """Filter and pick out the latest WinLibs tag.
+class TagSelector:
+    def __init__(self, with_clang, runtime, threads, snapshots):
+        self.with_clang = with_clang
+        self.runtime = runtime
+        self.threads = threads
+        self.snapshots = snapshots
 
-    * Remove snapshots
-    * Remove UCRT (as opposed to MSVCRT) linked versions
-    * Remove gcc-only versions
-    * Select the latest version of gcc, breaking ties with the clang and then
-      the other version numbers
-
-    """
-    sort_keys = {}
-    for tag in tags:
-        match = re.match("([^-]+)-([^-]+)-([^-]+)-msvcrt-r(.+)", tag)
+    def rank(self, tag):
+        match = re.match(rf"([^-]+)(?:-snapshot(\d+))?{self.threads}-(?:([^-]+)-)?([^-]+)-{self.runtime}-r(.+)", tag, flags=re.I)
         if not match:
-            continue
-        if "snapshot" in tag:
-            continue
-        sort_keys[tag] = [[int(i) for i in re.findall(r"\d+", j)]
-                          for j in match.groups()]
-    return max(sort_keys, key=sort_keys.get)
+            return
+        if self.with_clang and not match[3]:
+            return
+        if not self.snapshots and match[2]:
+            return
+        out = [[int(i) for i in re.findall(r"\d+", j or "")] for j in match.groups()]
+        out[1] = out[1] or [float("inf")]
+        return out
+
+    def latest(self, tags):
+        """Filter and pick out the latest WinLibs tag.
+
+        * Remove snapshots if snapshots aren't wanted
+        * Filter for UCRT or MSVCRT linked versions
+        * Remove gcc-only versions if with_clang is true
+        * Filter for posix/win32/mcf threads
+        * Select the latest version of gcc, breaking ties with the clang and
+          then the other version numbers
+
+        """
+        not_found = object()
+        latest = max(filter(self.rank, tags), key=self.rank, default=not_found)
+        if latest is not_found:
+            raise SystemExit(
+                "Error: No WinLibs tag exists which satifies "
+                f"needs_clang={self.with_clang} "
+                f"runtime={self.runtime} "
+                f"threads={self.threads} "
+                f"allow_snapshots={self.snapshots}"
+            )
+        return latest
 
 
 def deserialise_config(serialised):
     config = json.loads(serialised)
 
-    # Booleans come out as strings for some reason.
-    # Turn them back into proper booleans.
-    for key in ["with_clang", "add_to_path"]:
+    # Booleans come out as strings. Turn them back into proper booleans.
+    for key in ["with_clang", "add_to_path", "snapshots"]:
         if isinstance(config[key], str):
             config[key] = json.loads(config[key])
 
@@ -110,7 +130,7 @@ def release_assets(_release: dict):
 
 def pull(asset: Asset, dest: str) -> Path:
     """Download a single file from a github release."""
-    print("Dowload:", asset.url)
+    print("Dowload:", asset.url, flush=True)
     dest = Path(dest, asset.name)
     with urlopen(asset.url) as req:
         with dest.open("wb") as f:
@@ -220,10 +240,16 @@ def select_asset(assets, with_clang, architecture):
 
 
 def install(tag: str, with_clang: bool, destination: str, add_to_path: bool,
-            architecture: str, token: str = None):
+            architecture: str, token: str = None, runtime: str = "msvcrt",
+            threads: str = "posix", snapshots: bool = False):
     """Select, download and install a WinLibs build."""
 
-    tag = tag if tag and tag.lower() != "latest" else latest(tags(token))
+    if runtime and runtime.lower() not in ("msvcrt", "ucrt"):
+        raise SystemExit(f"Error: Invalid C runtime '{runtime}'. Must be one of 'msvcrt' or 'ucrt'")
+
+    if not tag or tag.lower() == "latest":
+        selector = TagSelector(with_clang, runtime or "msvcrt", threads or "posix", snapshots)
+        tag = selector.latest(tags(token))
     print("WinLibs tag:", tag)
     architecture = normalise_architecture(architecture or "x86_64")
     destination = Path(destination or os.environ["localappdata"]).resolve()
@@ -257,6 +283,9 @@ def main(args=None):
     p.add_argument("--add-to-path", action="store_true")
     p.add_argument("--destination")
     p.add_argument("--architecture")
+    p.add_argument("--runtime")
+    p.add_argument("--threads")
+    p.add_argument("--snapshots", action="store_true")
     p.add_argument("--token")
     arguments = vars(p.parse_args(args))
     token = arguments.pop("token")

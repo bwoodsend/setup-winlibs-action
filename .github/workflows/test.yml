@@ -1,7 +1,4 @@
----
-
 on:
-  push:
   workflow_dispatch:
 
 jobs:
@@ -24,28 +21,45 @@ jobs:
         env:
           token: ${{ github.token }}
 
-      - run: python validate.py ${{ steps.winlibs.outputs.bin }} 1 0 x86_64
+      - run: python validate.py ${{ steps.winlibs.outputs.bin }} 1 0 x86_64 msvcrt
 
       - id: no-path
         uses: ./
         with:
           add_to_path: false
           destination: 'C:\no_path'
-      - run: python validate.py ${{ steps.no-path.outputs.bin }} 0 0 x86_64
+      - run: python validate.py ${{ steps.no-path.outputs.bin }} 0 0 x86_64 msvcrt
 
       - id: with-clang
         uses: ./
         with:
           with_clang: true
           destination: 'C:\with_clang'
-      - run: python validate.py ${{ steps.with-clang.outputs.bin }} 1 1 x86_64
+      - run: python validate.py ${{ steps.with-clang.outputs.bin }} 1 1 x86_64 msvcrt
+
+      - id: with-clang-ucrt
+        uses: ./
+        with:
+          with_clang: true
+          destination: 'C:\clang_ucrt'
+          runtime: ucrt
+      - run: python validate.py ${{ steps.with-clang-ucrt.outputs.bin }} 1 1 x86_64 ucrt
+
+      - id: tagged
+        uses: ./
+        with:
+          with_clang: true
+          destination: 'C:\tagged'
+          add_to_path: false
+          tag: 14.2.0posix-19.1.7-12.0.0-msvcrt-r3
+      - run: python validate.py ${{ steps.tagged.outputs.bin }} 0 1 x86_64 msvcrt
 
       - id: everything
         uses: ./
         with:
-          with_clang: true
-          architecture: 'i686'
           destination: 'C:\with_everything'
           add_to_path: false
-          tag: 10.2.0-11.0.0-8.0.0-r4nvptx
-      - run: python validate.py ${{ steps.everything.outputs.bin }} 0 1 i686
+          runtime: ucrt
+          threads: mcf
+          snapshots: true
+      - run: python validate.py ${{ steps.everything.outputs.bin }} 0 0 x86_64 ucrt

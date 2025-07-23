@@ -19,17 +19,32 @@ This action accepts the following inputs:
 
 -   **tag**:
     A [WinLibs release tag](https://github.com/brechtsanders/winlibs_mingw/tags)
-    such as `11.1.0-12.0.0-9.0.0-r2 `.
-    Defaults to the tag with the newest version of gcc which may be referenced
-    with the special name `latest`.
+    such as `14.2.0posix-19.1.7-12.0.0-msvcrt-r3`.
+    Without an explicit tag, it defaults to the latest version of gcc that
+    satisfies the other tag selection options (**with_clang**, **runtime**,
+    **threads**, **snapshots**).
 
 -   **with_clang**:
     If `true`, install with LLVM + [clang].
     If `false` (the default), don't.
-    Clang produces binaries which are roughly 20% faster than those produced by
-    gcc but the compiler itself is huge and therefore takes longer to install.
-    Please note when also specifying **tag**
-    that not all releases do include clang builds.
+    Clang produces binaries which are often faster than those produced by
+    gcc but the compiler itself is huge and takes longer to install.
+    Note that not all WinLibs tags come with clang.
+
+-   **runtime**:
+    Select between linking against the `msvcrt` (legacy Windows support,
+    default) or `ucrt` [C runtimes](https://winlibs.com/#msvcrt-ucrt).
+    Ignored if **tag** is set.
+
+-   **threads**:
+    The [threading model](https://winlibs.com/#threading),
+    one of `posix` (default), `win32` or `mcf`.
+    Ignored if **tag** is set.
+
+-   **snapshots**
+    Allow using snapshot `gcc` versions if doing so allows for a newer `gcc`
+    version.
+    Ignored if **tag** is set.
 
 -   **destination**:
     The location to unpack into.

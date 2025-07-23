@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-"""
-
 import shutil
 import os
 import unittest
@@ -11,7 +7,7 @@ import re
 from subprocess import run, PIPE
 
 tc = unittest.TestCase()
-bin, in_path, with_clang, architecture = sys.argv[1:]
+bin, in_path, with_clang, architecture, runtime = sys.argv[1:]
 
 in_path = ast.literal_eval(in_path)
 with_clang = ast.literal_eval(with_clang)
@@ -35,21 +31,10 @@ if with_clang:
 else:
     assert not os.path.exists(clang), clang
 
-C_CODE = """
-#include <stdio.h>
-#include <stdint.h>
-
-int main() {
-    printf("Hello World!\\n");
-    printf("Size of pointer is %i.\\n", sizeof(size_t));
-    return 0;
-}
-"""
 
 def test_compile(cc):
     exe = "./test-executable"
-    run([cc, "-o", exe, "-x", "c", "-"],
-        input=C_CODE, universal_newlines=True, check=True)
+    run([cc, "-o", exe, "./test.c"], check=True)
     p = run([exe], check=True, stdout=PIPE, universal_newlines=True)
     tc.assertRegex(p.stdout, r"Hello World!\nSize of pointer is \d\.\n")
 
@@ -57,6 +42,14 @@ def test_compile(cc):
         re.search(r"Size of pointer is (\d)", p.stdout).group(1),
         "8" if architecture == "x86_64" else "4",
     )
+
+    if runtime == "msvcrt":
+        tc.assertIn("msvcrt.dll", p.stdout)
+        tc.assertNotIn("ucrt", p.stdout)
+    else:
+        tc.assertIn("ucrtbase.dll", p.stdout)
+        tc.assertNotIn("msvc", p.stdout)
+
 
 test_compile(gcc)
 if with_clang:
