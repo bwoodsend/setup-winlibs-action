@@ -174,11 +174,11 @@ def archive_top_level(_7z, archive):
     return min(re.findall("Path = (.*)", p.stdout), key=len)
 
 
-def set_output(key, value):
+def set_output(key, value: Path):
     if os.environ.get("GITHUB_OUTPUT"):
         with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-            f.write("{}={}\n".format(key, value))
-    print("WinLibs {}: {}".format(key, value))
+            f.write("{}={}\n".format(key, value.as_posix()))
+    print("WinLibs {}: {}".format(key, value.as_posix()))
 
 
 def prepend_to_path(path):
